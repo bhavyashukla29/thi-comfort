@@ -1,40 +1,55 @@
+<div align="center">
+
+<img src="assets/app-icon.png" width="96" alt="THI Comfort icon">
+
 # THI Comfort
 
 **Heat-stress early warning for dairy cattle — in every farmer's pocket.**
 
 [![Get it on Google Play](https://img.shields.io/badge/Google_Play-Download-673AB7?style=for-the-badge&logo=google-play&logoColor=white)](https://play.google.com/store/apps/details?id=com.bhavyashukla.thitracker)
 
-Heat stress costs dairy farmers money long before it's visible. Cattle eat less, produce less milk, and in severe cases face real health risk. The metric that quantifies it — the Temperature–Humidity Index (THI) — is standard in commercial dairy science, but the tools that measure it are built for large operations with sensor hardware budgets.
+![Kotlin](https://img.shields.io/badge/Kotlin-7F52FF?style=flat-square&logo=kotlin&logoColor=white)
+![Android](https://img.shields.io/badge/Android-minSdk_30-3DDC84?style=flat-square&logo=android&logoColor=white)
+![Play Billing](https://img.shields.io/badge/Play_Billing-8.3.0-673AB7?style=flat-square)
+![Languages](https://img.shields.io/badge/Languages-EN_·_HI_·_GU-C1440E?style=flat-square)
+![Status](https://img.shields.io/badge/Status-Live_on_Google_Play-1F3D2B?style=flat-square)
 
-THI Comfort puts the same calculation on a smartphone, using live weather data, at zero hardware cost.
+</div>
 
-**Live on Google Play:** [play.google.com/store/apps/details?id=com.bhavyashukla.thitracker](https://play.google.com/store/apps/details?id=com.bhavyashukla.thitracker)
+---
+
+Heat stress costs dairy farmers money long before it's visible. Cattle eat less, produce less milk, and in severe cases face real health risk. The metric that quantifies it — the Temperature–Humidity Index — is standard in commercial dairy science, but the tools that measure it are built for large operations with sensor hardware budgets.
+
+**THI Comfort puts the same calculation on a smartphone, using live weather data, at zero hardware cost.**
+
+Built for small and mid-sized dairy farmers in India, in English, Hindi and Gujarati.
 
 ---
 
 ## Screenshots
 
-| Live reading | Severity guidance |
-|---|---|
-| <img src="screenshots/main-screen.jpeg" width="260"> | <img src="screenshots/understanding-thi.jpeg" width="260"> |
+| Live reading | Severity guidance | 7-day trends |
+|:---:|:---:|:---:|
+| <img src="screenshots/phone/01-live-reading.jpeg" width="230"> | <img src="screenshots/phone/02-severity-guide.jpeg" width="230"> | <img src="screenshots/phone/03-trends.jpeg" width="230"> |
 
-| 7-day trends | First-run guided tour |
-|---|---|
-| <img src="screenshots/trends.jpeg" width="260"> | <img src="screenshots/tutorial.jpeg" width="260"> |
+| First-run guided tour | Language selection |
+|:---:|:---:|
+| <img src="screenshots/phone/04-guided-tour.jpeg" width="230"> | <img src="screenshots/phone/05-language-select.jpeg" width="230"> |
 
 ---
 
 ## What it does
 
-- **Live THI monitoring** — calculates heat-stress index from current weather at the user's exact location, automatically.
-- **Five severity tiers** — from Comfort to Danger, each with specific, practical guidance rather than just a number.
-- **Multi-shed tracking** — farmers with cattle in more than one location track each independently, with its own location, history and readings.
-- **Background alerts** — WorkManager-driven monitoring notifies the user when conditions turn dangerous, even when the app is closed.
-- **Manual entry** — for users with their own thermometer readings, or without connectivity.
-- **7-day trends** — history charting so patterns are visible, not just the current moment.
-- **Fully trilingual** — English, Hindi and Gujarati, as a first-class native experience rather than translated labels.
-- **Freemium subscriptions** — Google Play Billing with a 14-day trial; AdMob banners on the free tier.
-- **In-app updates** — flexible Play update flow, so users aren't stranded on stale builds.
+- **Live THI monitoring** — heat-stress index calculated from current weather at the user's exact location, automatically
+- **Five severity tiers** — from Comfort to Danger, each with specific guidance rather than just a number
+- **Multi-shed tracking** — cattle in more than one location, each with its own reading and history
+- **Background alerts** — WorkManager monitoring warns of dangerous conditions even when the app is closed
+- **Manual entry** — for users with their own thermometer, or without connectivity
+- **7-day trends** — history charting, so patterns are visible and not just today's number
+- **Breed-aware guidance** — indigenous breeds tolerate heat differently to crossbred and exotic ones, and the advice says so
+- **Fully trilingual** — English, Hindi and Gujarati as first-class experiences, not translated labels
+- **Freemium subscriptions** — Play Billing with a 14-day trial; AdMob banners on the free tier
+- **In-app updates** — flexible Play update flow, so nobody is stranded on a stale build
 
 ---
 
@@ -43,42 +58,38 @@ THI Comfort puts the same calculation on a smartphone, using live weather data, 
 | Area | Choice |
 |---|---|
 | Language | Kotlin |
-| Platform | Android, minSdk 30, targetSdk 36 |
+| Platform | Android — minSdk 30, targetSdk 36 |
 | Networking | Retrofit 2 + Gson, OpenWeatherMap API |
 | Monetisation | Google Play Billing 8.3.0, Google AdMob |
 | Background work | WorkManager |
 | Updates | Play In-App Updates (flexible) |
 | Charting | MPAndroidChart |
-| Location | FusedLocationProviderClient |
+| Location | FusedLocationProviderClient + geocoding autocomplete |
+
+Single module. No Compose, no ViewModel layer, no DI framework, no backend — each a deliberate choice, with the reasoning in [Architecture](docs/ARCHITECTURE.md).
 
 ---
 
-## Architecture
+## Documentation
 
-Deliberately simple and dependency-light: Activity-based, no Compose, no ViewModel layer, no backend.
-
-- **`BaseActivity`** — single inheritance point for every screen. Handles per-app locale via `LocaleHelper` and window-inset padding for edge-to-edge display, so both concerns are solved once rather than per-screen.
-- **Singleton stores backed by `SharedPreferences`** — `ShedStore`, `EntitlementStore`, `ThiHistoryStore`, `TrialStore`, `LocationCache`. Each owns its own persistence and exposes a small CRUD surface.
-- **`ThiComfortApplication`** — startup initialisation, locks the app to light mode.
-- **Shared renderers** — e.g. `SymptomChipRenderer` is used identically by the main screen and the reference screen, so the two cannot visually drift apart.
-
-No backend by design. Everything the app needs lives on the device or comes from the weather API, which keeps it usable on poor rural connectivity and removes an entire class of operational cost.
+| Document | What's in it |
+|---|---|
+| **[Architecture](docs/ARCHITECTURE.md)** | Screen map, state layer, reading pipeline, and what was deliberately left out |
+| **[Engineering notes](docs/ENGINEERING-NOTES.md)** | Six real bugs, how each was actually diagnosed, and why they were interesting |
+| **[Product](docs/PRODUCT.md)** | The problem, the THI scale, who this is for, and the decisions that follow from that |
+| **[Shipping](docs/SHIPPING.md)** | Play App Signing, the 12-testers/14-days requirement, production access, India's RBI PA-CB regulations |
 
 ---
 
-## Engineering notes
+## A sample of the engineering
 
-A few problems from this project that were more interesting than they first looked.
+Three from [the full write-up](docs/ENGINEERING-NOTES.md):
 
-**Billing callbacks on the wrong thread.** Google Play Billing delivers its callbacks off the main thread. Mutating views directly from them threw `ViewRootImpl$CalledFromWrongThreadException` — but the exception was being swallowed, so the symptom was simply a purchase that appeared to do nothing. Diagnosed from Logcat rather than guessed at, and fixed by marshalling UI work back through `runOnUiThread`.
+**A purchase that appeared to do nothing.** Play Billing delivers callbacks off the main thread. The callback mutated views directly, Android threw `ViewRootImpl$CalledFromWrongThreadException`, and the exception was swallowed inside the library — so the only symptom was a purchase that silently changed nothing. Found in Logcat, not by guessing.
 
-**Play's language splitting silently broke localisation.** Android App Bundles split resources per device by default, including language resources. The Hindi and Gujarati strings were complete and correct in source, present in the bundle, and still unavailable at runtime for most users. Resolved with `bundle { language { enableSplit = false } }`.
+**Localisation that was complete, correct, and unavailable.** Hindi and Gujarati strings were fully translated and present in the bundle, and most users still saw English. App Bundles split language resources per device by default, so an in-app language picker had nothing to switch to. One line in the Gradle config, invisible from anywhere in the source.
 
-**Forced edge-to-edge under targetSdk 36.** Android 15+ enforces edge-to-edge with no opt-out, so app content drew underneath the status and navigation bars. Reported by a tester during closed testing. Rather than patching each layout, the fix reads real `WindowInsets` values and applies them as padding once in `BaseActivity` — so it self-corrects across notches, gesture vs button navigation, rotation and split-screen, and covers every screen at once. The same fix caught a second problem: the AdMob banner pinned to the bottom edge was being partially covered by the navigation bar, which is an ad-viewability issue as well as a visual one.
-
-**Reinstall and subscription state.** Without a backend there's no server-side source of truth for an existing subscriber's billing period after a reinstall. Handled with backup rules plus a graceful timeout fallback, with an explicit acknowledgement that full correctness would require server state this app deliberately doesn't have.
-
-**Onboarding that existing users would never see.** The first-run guided tour had to reach people who already had the app installed — the ones who'd asked for it. Reusing the existing onboarding flag would have shown it only to new installs, since that flag was already set on every existing device. It uses its own preference key for exactly that reason.
+**Onboarding that would have missed everyone who asked for it.** Testers wanted the multi-shed concept explained. Adding it to the existing onboarding flow would have shown it only to new installs — because the onboarding flag was already set on every device belonging to the people who'd raised the feedback.
 
 ---
 
@@ -86,12 +97,12 @@ A few problems from this project that were more interesting than they first look
 
 **Live on Google Play**, released September 2026.
 
-Validated through a 14-day closed test with 12 testers — practising veterinary and farm-health professionals, i.e. the app's actual target users. The edge-to-edge rendering bug above was found and fixed during that test.
+Validated through a 14-day closed test with 12 testers — practising veterinary and farm-health professionals, the app's actual target users. The edge-to-edge rendering bug documented in the engineering notes was found and fixed during that test.
 
 ---
 
 ## Contact
 
-Feedback and questions: workspacematrix.bhavya@gmail.com
+**Bhavya Shukla** — workspacematrix.bhavya@gmail.com
 
-Source code is kept in a private repository. Happy to walk through any part of it on request.
+Source is kept in a private repository. Happy to walk through any part of it.
