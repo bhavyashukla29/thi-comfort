@@ -17,6 +17,23 @@ Six activities, all extending a common `BaseActivity`:
 | `KnowThiActivity` | Static reference for all five severity tiers. |
 | `UpgradeActivity` | Subscription plans, purchase flow, and subscribed-state management. |
 
+```mermaid
+flowchart TD
+    L["LanguageActivity<br/><i>splash · language choice</i>"]
+    O["OnboardingActivity<br/><i>first run only</i>"]
+    M["MainActivity<br/><i>live reading · sheds · manual entry</i>"]
+    T["TrendsActivity<br/><i>7-reading history</i>"]
+    K["KnowThiActivity<br/><i>all five tiers</i>"]
+    U["UpgradeActivity<br/><i>plans · purchase</i>"]
+
+    L -->|first run| O
+    L -->|returning| M
+    O --> M
+    M --> T
+    M --> K
+    M --> U
+```
+
 ---
 
 ## `BaseActivity`
@@ -61,6 +78,20 @@ Keeping these as separate objects rather than one god-store means a screen touch
 
 5. The result maps to one of five tiers, which drives the background tint, the card colours, the severity label, and the symptom chips shown.
 6. The reading is written to `ThiHistoryStore` and `LastReadingCache`.
+
+```mermaid
+flowchart LR
+    S["ShedStore<br/><i>active shed</i>"] --> C{"coordinates"}
+    C -->|saved location| LC["LocationCache"]
+    C -->|device location| F["FusedLocationProvider"]
+    LC --> W["WeatherApiService<br/><i>OpenWeatherMap</i>"]
+    F --> W
+    W --> TC["ThiCalculator"]
+    TC --> TR["severity tier<br/><i>0 – 4</i>"]
+    TR --> UI["UI<br/><i>tint · label · chips</i>"]
+    TC --> H["ThiHistoryStore"]
+    TC --> LR["LastReadingCache"]
+```
 
 Adding a shed uses `GeocodingApiService` behind a debounced autocomplete. Typing alone never selects a place — the user must tap a suggestion, which removes an entire class of "wrong location silently chosen" bugs that a blind single-result geocode would produce.
 

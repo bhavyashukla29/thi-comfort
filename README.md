@@ -105,4 +105,4 @@ Validated through a 14-day closed test with 12 testers — practising veterinary
 
 **Bhavya Shukla** — workspacematrix.bhavya@gmail.com
 
-Source is kept in a private repository. Happy to walk through any part of it.
+Source is kept private. Happy to walk through any part of it on request.
